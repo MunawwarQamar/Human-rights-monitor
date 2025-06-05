@@ -1,4 +1,4 @@
-# Human Rights Case Management System 🧑‍⚖️
+# Human Rights Case Management System 👩🏻‍💻
 
 A backend system for managing and tracking human rights violation cases using FastAPI and MongoDB.  
 This project provides RESTful APIs to store, update, and retrieve case data efficiently.
