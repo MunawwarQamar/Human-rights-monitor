@@ -74,6 +74,8 @@ The Human Rights MIS system enables NGOs and legal teams to:
 ├── routers/                 # API route definitions
 ├── pages/                   # Streamlit pages (UI modules)
 ├── uploads/                 # Uploaded evidence files
+├── postman/
+│   └── Human Rights MIS API.postman_collection.json  # API testing collection
 ```
 
 ---

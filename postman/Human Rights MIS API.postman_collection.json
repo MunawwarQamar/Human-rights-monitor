@@ -1,0 +1,345 @@
+{
+	"info": {
+		"_postman_id": "fd6ebe1a-cbcc-4d0d-94c3-f8332960c025",
+		"name": "Human Rights MIS API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "37335361",
+		"_collection_link": "https://supply-4570.postman.co/workspace/supply-Workspace~c1bccbc5-b543-47c8-a286-3f3b12c8cb06/collection/37335361-fd6ebe1a-cbcc-4d0d-94c3-f8332960c025?action=share&source=collection_link&creator=37335361"
+	},
+	"item": [
+		{
+			"name": "List All Cases",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/cases",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"cases"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create New Case",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"case_id\": \"HRM-2025-00017\",\r\n  \"title\": \"Arbitrary Detention of Student\",\r\n  \"description\": \"Detention without legal process\",\r\n  \"violation_types\": [\"arbitrary_detention\"],\r\n  \"status\": \"new\",\r\n  \"priority\": \"medium\",\r\n  \"location\": {\r\n    \"country\": \"Palestine\",\r\n    \"region\": \"Ramallah\",\r\n    \"coordinates\": {\r\n      \"type\": \"Point\",\r\n      \"coordinates\": [35.2124, 31.9038]\r\n    }\r\n  },\r\n  \"date_occurred\": \"2025-06-01T00:00:00\",\r\n  \"date_reported\": \"2025-06-02T00:00:00\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/cases",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"cases"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "filter",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/cases?country=Palestine",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"cases"
+					],
+					"query": [
+						{
+							"key": "country",
+							"value": "Palestine"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Case by ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/cases/HRM-2025-00017",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"cases",
+						"HRM-2025-00017"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Case Status",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"status\": \"resolved\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/cases/HRM-2025-00017/status",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"cases",
+						"HRM-2025-00017",
+						"status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Full Case",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"Updated Title: Arbitrary Detention\",\r\n  \"description\": \"Updated details about the incident.\",\r\n  \"priority\": \"high\",\r\n  \"status\": \"under_investigation\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/cases/HRM-2025-00017",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"cases",
+						"HRM-2025-00017"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Archive Case",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/cases/HRM-2025-00017",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"cases",
+						"HRM-2025-00017"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Case Status History",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/cases/HRM-2025-00017/history",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"cases",
+						"HRM-2025-00017",
+						"history"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Upload Evidence to Case",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/C:/Users/HP/Desktop/U4.2/Web Services/assignmnet1.pdf"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/cases/HRM-2025-00017/upload",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"cases",
+						"HRM-2025-00017",
+						"upload"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Analytics - Violation Summary",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/analytics/violations",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"analytics",
+						"violations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Analytics - Cases by Country",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/analytics/geodata",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"analytics",
+						"geodata"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Analytics - Cases Over Time",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/analytics/timeline",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"analytics",
+						"timeline"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
