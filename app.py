@@ -36,9 +36,9 @@ This platform supports the collection and organization of:
 # -------------------------------
 st.markdown("### 👥 Team Members")
 st.write("""
-- 👩‍💻 **Munawwar Qamar** — Case Management, Dashboard, Upload, Frontend
-- 👩 **Aya** — Victim & Witness Modules
-- 👩 **Shahd** — Incident Reporting & Data Validation
+- 👩‍💻 **Munawwar Qamar** : Case Management, Dashboard, Upload, Frontend
+- 👩 **Aya** : Victim & Witness Modules
+- 👩 **Shahd** : Incident Reporting & Data Validation
 """)
 
 # -------------------------------

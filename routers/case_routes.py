@@ -8,11 +8,13 @@ import os
 
 router = APIRouter()
 
-# Model for PATCH request
+# Model for PATCH status update
 class StatusUpdate(BaseModel):
     status: str
 
+# ------------------------
 # Create a new case
+# ------------------------
 @router.post("/cases")
 async def create_case(case: Case):
     existing = case_collection.find_one({"case_id": case.case_id})
@@ -34,9 +36,9 @@ async def create_case(case: Case):
 
     return {"message": "Case added successfully!", "case_id": str(result.inserted_id)}
 
-
-
+# ------------------------
 # Get all cases (with filters)
+# ------------------------
 @router.get("/cases")
 async def get_all_cases(
     country: Optional[str] = Query(None),
@@ -44,7 +46,7 @@ async def get_all_cases(
     date_from: Optional[datetime] = Query(None),
     date_to: Optional[datetime] = Query(None),
     status: Optional[str] = Query(None),
-    query_text: Optional[str] = Query(None)  # 🔍 New: General search
+    query_text: Optional[str] = Query(None)
 ):
     try:
         query = {}
@@ -83,8 +85,9 @@ async def get_all_cases(
         print("❌ Error in filtered GET /cases:", e)
         raise HTTPException(status_code=500, detail="Failed to retrieve cases")
 
-
+# ------------------------
 # Get a case by ID
+# ------------------------
 @router.get("/cases/{case_id}")
 async def get_case_by_id(case_id: str):
     try:
@@ -97,9 +100,10 @@ async def get_case_by_id(case_id: str):
         print("❌ Error in GET /cases/{id}:", e)
         raise HTTPException(status_code=500, detail="Failed to retrieve case")
 
-
-# Update case status
-@router.patch("/cases/{case_id}")
+# ------------------------
+# Update status only
+# ------------------------
+@router.patch("/cases/{case_id}/status")
 async def update_case_status(case_id: str, data: StatusUpdate):
     try:
         case = case_collection.find_one({"case_id": case_id})
@@ -111,7 +115,7 @@ async def update_case_status(case_id: str, data: StatusUpdate):
 
         result = case_collection.update_one(
             {"case_id": case_id},
-            {"$set": {"status": new_status}}
+            {"$set": {"status": new_status, "updated_at": datetime.utcnow()}}
         )
 
         if result.modified_count == 0:
@@ -127,17 +131,43 @@ async def update_case_status(case_id: str, data: StatusUpdate):
 
         return {"message": "Case status updated successfully", "new_status": new_status}
     except Exception as e:
-        print("❌ Error in PATCH /cases/{case_id}:", e)
+        print("❌ Error in PATCH /cases/{case_id}/status:", e)
         raise HTTPException(status_code=500, detail="Failed to update status")
 
+# ------------------------
+# Update full case (Edit Case)
+# ------------------------
+@router.patch("/cases/{case_id}")
+async def update_case(case_id: str, updated_data: dict):
+    try:
+        case = case_collection.find_one({"case_id": case_id})
+        if not case:
+            raise HTTPException(status_code=404, detail="Case not found")
 
+        updated_data["updated_at"] = datetime.utcnow()
+
+        result = case_collection.update_one(
+            {"case_id": case_id},
+            {"$set": updated_data}
+        )
+
+        if result.modified_count == 0:
+            raise HTTPException(status_code=500, detail="Case update failed")
+
+        return {"message": "Case updated successfully"}
+    except Exception as e:
+        print("❌ Error in full PATCH /cases:", e)
+        raise HTTPException(status_code=500, detail="Failed to update case")
+
+# ------------------------
 # Archive a case
+# ------------------------
 @router.delete("/cases/{case_id}")
 async def archive_case(case_id: str):
     try:
         result = case_collection.update_one(
             {"case_id": case_id},
-            {"$set": {"status": "archived"}}
+            {"$set": {"status": "archived", "updated_at": datetime.utcnow()}}
         )
 
         if result.matched_count == 0:
@@ -148,8 +178,9 @@ async def archive_case(case_id: str):
         print("❌ Error in DELETE /cases/{case_id}:", e)
         raise HTTPException(status_code=500, detail="Failed to archive case")
 
-
+# ------------------------
 # Get status history
+# ------------------------
 @router.get("/cases/{case_id}/history")
 async def get_case_status_history(case_id: str):
     try:
@@ -163,8 +194,9 @@ async def get_case_status_history(case_id: str):
         print("Error in GET /cases/{case_id}/history:", e)
         raise HTTPException(status_code=500, detail="Failed to retrieve case history")
 
-
+# ------------------------
 # Upload file to case
+# ------------------------
 UPLOAD_FOLDER = "uploads"
 
 @router.post("/cases/{case_id}/upload")

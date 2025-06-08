@@ -1,6 +1,6 @@
 # 🕊️ Human Rights Case Management System
 
-A secure and data-driven platform for documenting and managing human rights violations. Built with FastAPI, MongoDB, and Streamlit.
+A modern case management platform for documenting, analyzing, and monitoring human rights violations in the field. Built using FastAPI, MongoDB, and Streamlit.
 
 ---
 
@@ -10,20 +10,37 @@ The Human Rights MIS system enables NGOs and legal teams to:
 
 - Record human rights cases (e.g., arbitrary detention, forced displacement)
 - Manage victims and witness data securely
-- Submit incident reports with geolocation and media
-- Analyze data through charts and exportable reports
+- Submit incident reports with geolocation and media attachments
+- Analyze trends via visual analytics and exportable reports
 
 ---
 
 ## 2️⃣ Key Features
 
-- ✅ CRUD for human rights cases
-- 🔍 Filter cases by country, status, violation, and date
-- 🧾 Case status history tracking
-- 📎 Evidence uploading (PDF, images, videos)
-- 📊 Analytics dashboard with pie, bar, and line charts
-- 📁 Export cases to Excel
-- 🌐 Organized UI navigation (About, Dashboard, etc.)
+### 🧾 Case Management
+- ✅ Create, view, update, and archive cases
+- 🔄 View full case status history
+
+### 📎 Evidence Handling
+- 📁 Upload and attach PDFs, images, and videos to specific cases
+
+### 📊 Analytics & Reporting
+- 🥧 Pie chart of violations
+- 📊 Bar chart by country
+- 📈 Timeline chart by month
+- 📥 Export filtered data to Excel
+
+### 🔍 Smart Filtering
+- Filter cases by:
+  - Country
+  - Violation type
+  - Case status
+  - Date range
+
+### 🌐 Clean UI & Navigation
+- Streamlit-based modular UI
+- Sidebar and dashboard navigation
+- Inline alerts and success messages
 
 ---
 
@@ -32,9 +49,12 @@ The Human Rights MIS system enables NGOs and legal teams to:
 - 🐍 Python 3.12
 - 🚀 FastAPI + Uvicorn (Backend API)
 - 🍃 MongoDB (NoSQL Database)
-- 🧾 Pydantic (Validation)
-- 📊 Streamlit (Frontend Dashboard)
-- 📦 Plotly, Requests, pandas, openpyxl
+- 🧾 Pydantic (Validation Models)
+- 📊 Streamlit (Frontend)
+- 📦 Libraries:
+  - Plotly (Charts)
+  - Requests (API calls)
+  - Pandas, OpenPyXL (Excel export)
 
 ---
 
@@ -42,13 +62,13 @@ The Human Rights MIS system enables NGOs and legal teams to:
 
 ```
 .
-├── main.py                  # Entry point (FastAPI app)
+├── main.py                  # FastAPI application entry point
 ├── models/                 # Pydantic models
-├── routers/                # API route definitions
-├── database/               # MongoDB connection & collections
-├── dashboard/              # Streamlit frontend pages
-├── uploads/                # Evidence storage
-├── populate_cases.py       # Script to populate test data
+├── routers/                # All API endpoints (cases, analytics, etc.)
+├── database/               # MongoDB connection setup
+├── dashboard/              # Streamlit pages
+├── uploads/                # Uploaded evidence files
+├── populate_cases.py       # Script to insert sample/test data
 ├── requirements.txt
 └── README.md
 ```
@@ -57,58 +77,77 @@ The Human Rights MIS system enables NGOs and legal teams to:
 
 ## 5️⃣ How to Run the Project
 
-### ▶️ Backend (FastAPI)
+### ▶️ 1. Backend (FastAPI)
 ```bash
 uvicorn main:app --reload
 ```
 
-### ▶️ Frontend (Streamlit)
+### ▶️ 2. Frontend (Streamlit Dashboard)
 ```bash
 cd dashboard/
 streamlit run main.py
 ```
 
-### ▶️ Load Test Data (Optional)
+### ▶️ 3. Load Sample Data (Optional)
 ```bash
 python populate_cases.py
+```
+
+### ▶️ 4. Install Dependencies
+```bash
+pip install -r requirements.txt
 ```
 
 ---
 
 ## 6️⃣ API Documentation
 
+### 🧾 Case Endpoints
 - `POST /cases/` – Create new case
-- `GET /cases/` – List all cases (with filters)
+- `GET /cases/` – List all cases (with optional filters)
 - `GET /cases/{case_id}` – Retrieve a specific case
-- `PATCH /cases/{case_id}` – Update case status
+- `PATCH /cases/{case_id}` – Update all case fields
+- `PATCH /cases/{case_id}/status` – Update case status only
 - `DELETE /cases/{case_id}` – Archive a case
-- `GET /cases/{case_id}/history` – View status history
-- `POST /cases/{case_id}/upload` – Upload file to a case
-- `GET /analytics/violations` – Violations summary
+- `GET /cases/{case_id}/history` – View case status history
+- `POST /cases/{case_id}/upload` – Upload a file to a case
+
+### 📊 Analytics Endpoints
+- `GET /analytics/violations` – Violation summary (supports filters)
 - `GET /analytics/geodata` – Distribution by country
-- `GET /analytics/timeline` – Trend over time
+- `GET /analytics/timeline` – Monthly timeline of cases
 
 ---
 
 ## 7️⃣ Screenshots / Demo
 
-> 📸 _Add here images of your dashboard UI, charts, and evidence upload._
+> 📸 **To add:**
+>
+> - 📋 Case management form
+> - 📊 Dashboard charts (pie, bar, line)
+> - 🗺️ Interactive map of cases
+> - 📎 File upload interface
 
 ---
 
 ## 8️⃣ Contributors
 
-| Name              | Role                                  |
-|-------------------|----------------------------------------|
-| **Munawwar Qamar** | Case Management + Dashboard + Analytics |
-| **Aya**            | Victim & Witness Module                |
-| **Shahd**          | Incident Reporting Module              |
+| Name               | Role                                      |
+|--------------------|-------------------------------------------|
+| **Munawwar Qamar** | Case Management, Dashboard, Analytics     |
+| **Aya**            | Victim & Witness Module                   |
+| **Shahd**          | Incident Reporting & Validation Modules   |
 
 ---
 
 ## 9️⃣ Acknowledgements
 
-- `Streamlit Option Menu` for horizontal navbars
-- MongoDB Aggregation for real-time analytics
-- FastAPI Documentation: https://fastapi.tiangolo.com/
-- Plotly Express & OpenPyXL for data visualization/export
+- [`Streamlit Option Menu`](https://github.com/victoryhb/streamlit-option-menu) – For custom navigation
+- [`MongoDB Aggregation Framework`](https://www.mongodb.com/docs/manual/aggregation/) – For filtering & statistics
+- [`FastAPI`](https://fastapi.tiangolo.com/) – API framework
+- [`Plotly Express`](https://plotly.com/python/plotly-express/) – Visual analytics
+- [`OpenPyXL`](https://openpyxl.readthedocs.io/) – Excel exporting
+
+---
+
+✅ _Project developed as part of a university course on Web Services and Applied Systems Design._
