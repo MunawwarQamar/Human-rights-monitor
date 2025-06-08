@@ -62,15 +62,18 @@ The Human Rights MIS system enables NGOs and legal teams to:
 
 ```
 .
-├── main.py                  # FastAPI application entry point
-├── models/                 # Pydantic models
-├── routers/                # All API endpoints (cases, analytics, etc.)
-├── database/               # MongoDB connection setup
-├── dashboard/              # Streamlit pages
-├── uploads/                # Uploaded evidence files
-├── populate_cases.py       # Script to insert sample/test data
+├── app.py                   # Streamlit UI entry point
+├── main.py                  # FastAPI backend entry point
+├── populate_cases.py        # Script to insert sample/test data
+├── final_project.pdf        # Project documentation (PDF)
+├── README.md
 ├── requirements.txt
-└── README.md
+├── .gitignore
+├── database/                # MongoDB connection setup
+├── models/                  # Pydantic models
+├── routers/                 # API route definitions
+├── pages/                   # Streamlit pages (UI modules)
+├── uploads/                 # Uploaded evidence files
 ```
 
 ---
@@ -84,8 +87,7 @@ uvicorn main:app --reload
 
 ### ▶️ 2. Frontend (Streamlit Dashboard)
 ```bash
-cd dashboard/
-streamlit run main.py
+streamlit run app.py
 ```
 
 ### ▶️ 3. Load Sample Data (Optional)
@@ -150,4 +152,4 @@ pip install -r requirements.txt
 
 ---
 
-✅ _Project developed as part of a university course on Web Services and Applied Systems Design._
+✅ _Project developed as part of a university course on Web Services._
