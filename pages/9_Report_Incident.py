@@ -9,10 +9,14 @@ import matplotlib.pyplot as plt
 import os
 
 # تأكد أن هذا يطابق عنوان URL للـ backend API الخاص بك
-API_URL = "http://127.0.0.1:8000"
+# IMPORTANT: Added '/api' prefix here as defined in main.py for most routes
+API_URL = "http://127.0.0.1:8000/api" # <--- التعديل الأول هنا
+
+# Base URL for static files (uploads) - does not include '/api' prefix
+BASE_BACKEND_URL = "http://127.0.0.1:8000" # <--- إضافة هذا المتغير الجديد للتعامل مع مسارات الـ uploads
 
 st.set_page_config(page_title="Incident Reporting System", layout="wide")
-st.title("🛡️ Incident Reporting System")
+st.title("🛡️ Human Rights Monitor: Incident Reporting") # <--- يمكنك تحديث العنوان هنا
 
 menu = st.sidebar.radio("Choose an action", ["Submit Report", "View Reports", "Analytics"])
 
@@ -27,11 +31,10 @@ def validate_file(file):
         return False, f"File {file.name} has an unsupported file type. Allowed types: {', '.join(allowed_exts)}"
     return True, ""
 
-geolocator = Nominatim(user_agent="incident_report_app")
+geolocator = Nominatim(user_agent="hr_monitor_app") # <--- يمكن تحديث user_agent هنا ليكون أكثر تحديداً
 
 def get_coords_from_location(country, city):
     try:
-        # بناء الاستعلام بشكل مرن: إذا لم تكن المدينة موجودة، فابحث عن البلد فقط.
         query_parts = []
         if city and city.strip():
             query_parts.append(city.strip())
@@ -41,13 +44,12 @@ def get_coords_from_location(country, city):
         query = ", ".join(query_parts)
         
         if not query:
-            return None, None # لا يوجد بلد أو مدينة، فلا يمكن تحديد إحداثيات
+            return None, None 
 
-        # جرب أولاً بالبلد والمدينة معًا، ثم بالبلد فقط إذا فشلت المدينة
         location = None
         if query_parts:
             location = geolocator.geocode(query, timeout=20)
-            if not location and len(query_parts) > 1 and country and country.strip(): # إذا فشل البحث بالمدينة والبلد معًا، جرب بالبلد فقط
+            if not location and len(query_parts) > 1 and country and country.strip():
                  st.info(f"Could not find exact coordinates for '{query}'. Trying to geocode '{country.strip()}' only.")
                  location = geolocator.geocode(country.strip(), timeout=20)
 
@@ -64,19 +66,16 @@ def get_coords_from_location(country, city):
 if menu == "Submit Report":
     st.header("📋 Submit a New Incident Report")
 
-    # تهيئة session_state بشكل صحيح ومرة واحدة فقط
-    # تم إعادة إحداثيات فلسطين الافتراضية
     if "lat" not in st.session_state:
-        st.session_state.lat = 31.9037 # إحداثيات رام الله
+        st.session_state.lat = 31.9037 
     if "lon" not in st.session_state:
-        st.session_state.lon = 35.2163 # إحداثيات رام الله
+        st.session_state.lon = 35.2163 
     
     if "country_display_value" not in st.session_state:
         st.session_state.country_display_value = "Palestine"
     if "city_display_value" not in st.session_state:
-        st.session_state.city_display_value = "Ramallah" # يمكن جعلها فارغة إذا لم تكن رام الله هي المدينة الافتراضية
-                                                         # ولكنك ذكرت Ramallah في وصف السؤال الأصلي
-
+        st.session_state.city_display_value = "Ramallah" 
+            
     if "map_clicked_recently" not in st.session_state:
         st.session_state.map_clicked_recently = False
 
@@ -90,12 +89,7 @@ if menu == "Submit Report":
             country_input = st.text_input("Country", value=st.session_state.country_display_value, key="country_input_field")
             city_input = st.text_input("City (optional)", value=st.session_state.city_display_value, key="city_input_field")
 
-        # المنطق المحسّن لتحديث الإحداثيات من حقول النص
-        # يتم التحديث فقط إذا تغيرت قيم الحقول ولم يتم النقر على الخريطة مؤخرًا
         if not st.session_state.map_clicked_recently:
-            # Check if current input values are different from last stored display values
-            # OR if we just started and default values are not yet reflected on the map
-            # This logic avoids redundant geocoding and ensures text inputs override map clicks until new click
             if (country_input != st.session_state.country_display_value or \
                 city_input != st.session_state.city_display_value) :
                 
@@ -103,24 +97,17 @@ if menu == "Submit Report":
                 if lat is not None and lon is not None:
                     st.session_state.lat = lat
                     st.session_state.lon = lon
-                # else: # If geocoding fails, maybe revert to default or handle as needed
-                #     st.session_state.lat = 31.9037 # Fallback to Ramallah
-                #     st.session_state.lon = 35.2163 # Fallback to Ramallah
-
                 st.session_state.country_display_value = country_input
                 st.session_state.city_display_value = city_input
-                st.session_state.map_clicked_recently = False # Ensure map is not marked as clicked if text changed
+                st.session_state.map_clicked_recently = False
 
         st.markdown("### 📍 Select Location on Map or Input Coordinates")
 
         map_center = [st.session_state.lat, st.session_state.lon]
 
-        # ضبط مستوى التكبير: افتراضيًا 10 (لفلسطين) أو 2 إذا كانت إحداثيات عامة (لم تعد تستخدم)
-        # الآن بما أن فلسطين هي الافتراضية، يمكن أن يكون التكبير 10 أو 11
         zoom_level = 10 
         m = folium.Map(location=map_center, zoom_start=zoom_level)
 
-        # Marker يظهر دائماً على الموقع المحدد (سواء كان افتراضياً أو من إدخال المستخدم/النقر)
         if st.session_state.lat is not None and st.session_state.lon is not None:
             folium.Marker([st.session_state.lat, st.session_state.lon], tooltip="Selected Location").add_to(m)
 
@@ -131,13 +118,10 @@ if menu == "Submit Report":
             st.session_state.lon = map_data["last_clicked"]["lng"]
             st.toast("Location updated from map click!")
             st.session_state.map_clicked_recently = True
-            # عند النقر على الخريطة، يمكن تحديث حقول النص تلقائيًا بالعكس (Reverse Geocoding)
             try:
-                # هذا الجزء يحتاج إلى مكتبة geopy لإعادة تحديد اسم المكان من الإحداثيات
                 location_from_coords = geolocator.reverse((st.session_state.lat, st.session_state.lon), timeout=20)
                 if location_from_coords and location_from_coords.address:
                     address_parts = location_from_coords.raw.get('address', {})
-                    # حاول استخراج البلد والمدينة
                     detected_country = address_parts.get('country')
                     detected_city = address_parts.get('city') or address_parts.get('town') or address_parts.get('village')
                     
@@ -145,22 +129,21 @@ if menu == "Submit Report":
                         st.session_state.country_display_value = detected_country
                     if detected_city:
                         st.session_state.city_display_value = detected_city
-                    else: # If no city, clear the city field
+                    else:
                         st.session_state.city_display_value = ""
-                else: # If reverse geocoding fails, clear city/country
+                else: 
                     st.session_state.country_display_value = ""
                     st.session_state.city_display_value = ""
             except GeocoderTimedOut:
                 st.warning("Reverse geocoder timed out. Could not determine location name from coordinates.")
             except Exception as e:
                 st.warning(f"An error occurred during reverse geocoding: {e}")
-            st.rerun() # Re-run to update text fields after map click
+            st.rerun() 
 
         latitude = st.session_state.lat
         longitude = st.session_state.lon
         st.write(f"Selected Coordinates: Latitude {latitude:.6f}, Longitude {longitude:.6f}")
         
-        # رسالة تحذير مخصصة للإحداثيات الافتراضية لرام الله (للحث على الدقة)
         if latitude == 31.9037 and longitude == 35.2163 and \
            st.session_state.country_display_value == "Palestine" and st.session_state.city_display_value == "Ramallah":
             st.warning("The map is centered on Ramallah, Palestine. Please click on the map to select the exact incident location, or provide a more specific City.")
@@ -209,8 +192,6 @@ if menu == "Submit Report":
         if submitted:
             status_message_placeholder.empty()
 
-            # التحقق من أن الإحداثيات ليست الافتراضية تمامًا (إلا إذا كانت هي الإحداثيات الحقيقية للموقع)
-            # تم تعديل الشرط ليكون أكثر دقة
             if latitude == 31.9037 and longitude == 35.2163 and \
                country_input.strip() == "Palestine" and city_input.strip() in ["", "Ramallah"]:
                 status_message_placeholder.error("Please click on the map to select a more precise incident location, or provide a more specific City than just 'Ramallah'.")
@@ -252,15 +233,15 @@ if menu == "Submit Report":
                 }
 
                 try:
+                    # Request to API_URL (which now includes /api)
                     response = requests.post(f"{API_URL}/reports/", data=data, files=files_to_upload)
                     if response.status_code == 201:
                         status_message_placeholder.success("✅ Report submitted successfully!")
 
-                        # إعادة تعيين قيم session_state إلى الافتراضيات الأصلية لرام الله
                         st.session_state.lat = 31.9037
                         st.session_state.lon = 35.2163
                         st.session_state.country_display_value = "Palestine"
-                        st.session_state.city_display_value = "Ramallah" # إعادة Ramallah كقيمة افتراضية
+                        st.session_state.city_display_value = "Ramallah" 
                         st.session_state.map_clicked_recently = False
                         
                     else:
@@ -320,6 +301,7 @@ elif menu == "View Reports":
 
     try:
         with st.spinner("Fetching reports..."):
+            # Request to API_URL (which now includes /api)
             response = requests.get(f"{API_URL}/reports/", params=params)
         
         if response.ok:
@@ -354,6 +336,7 @@ elif menu == "View Reports":
                     if new_status != status:
                         if st.button(f"Apply Status Change for {report_id}", key=f"apply_status_btn_{report_id}"):
                             try:
+                                # Request to API_URL (which now includes /api)
                                 update_response = requests.patch(
                                     f"{API_URL}/reports/{report_id}",
                                     json={"status": new_status}
@@ -387,7 +370,8 @@ elif menu == "View Reports":
                             ev_desc = ev.get('description', '')
                             
                             if ev_url:
-                                full_url = f"{API_URL}{ev_url}"
+                                # IMPORTANT: Use BASE_BACKEND_URL for static files as they are mounted directly
+                                full_url = f"{BASE_BACKEND_URL}{ev_url}" # <--- التعديل الثاني هنا
                                 if ev_type == "photo":
                                     st.image(full_url, caption=ev_desc, width=250)
                                 elif ev_type == "video":
@@ -409,6 +393,7 @@ elif menu == "Analytics":
     st.header("📊 Violation Type Analytics")
     try:
         with st.spinner("Fetching analytics data..."):
+            # Request to API_URL (which now includes /api)
             response = requests.get(f"{API_URL}/reports/analytics")
         
         if response.ok:
