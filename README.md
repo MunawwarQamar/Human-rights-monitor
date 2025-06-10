@@ -123,6 +123,7 @@ pip install -r requirements.txt
 - `GET /reports/` – List reports (filter by status, date, location)
 - `PATCH /reports/{report_id}` – Update report status
 - `GET /reports/analytics` – Count reports by violation type
+-  `GET /reports/{report_id}` – Retrieve a single incident report by its unique ID, to view specific report details.
 
 
 ### 📊 Analytics Endpoints
@@ -148,7 +149,7 @@ pip install -r requirements.txt
 | Name               | Role                                      |
 |--------------------|-------------------------------------------|
 | **Munawwar Qamar** | Case Management, Dashboard, Analytics     |
-| **Aya**            | Victim & Witness Module                   |
+| **Ayah**            | Victim & Witness Module                   |
 | **Shahd**          | Incident Reporting & Validation Modules   |
 
 ---
