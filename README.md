@@ -62,23 +62,24 @@ The Human Rights MIS system enables NGOs and legal teams to:
 
 ```
 .
-├── app.py                   # Streamlit UI entry point
-├── main.py                  # FastAPI backend entry point
-├── populate_cases.py        # Script to insert sample/test data
-├── final_project.pdf        # Project documentation (PDF)
+├── app.py                     # Streamlit UI entry point
+├── main.py                    # FastAPI backend entry point
+├── populate_cases.py          # Script to insert sample/test data
+├── final_project.pdf          # Project documentation (PDF)
 ├── README.md
 ├── requirements.txt
 ├── .gitignore
-├── database/                # MongoDB connection setup
-├── models/                  # Pydantic models
-├── routers/                 # API route definitions
-├── pages/                   # Streamlit pages (UI modules)
-├── uploads/                 # Uploaded evidence files
+├── database/                  # MongoDB connection setup
+├── models/                    # Pydantic models (for FastAPI and potentially shared with Streamlit)
+├── routers/                   # API route definitions (FastAPI endpoints)
+├── pages/                     # Streamlit pages (UI modules)
+├── uploads/                   # Uploaded evidence files (should be excluded from Git)
+├── documentation/             # NEW: Folder for API documentation artifacts
+│   ├── openapi.json           # Downloaded OpenAPI schema (snapshot of your API)
 ├── postman/
-│   └── Human Rights MIS API.postman_collection.json  # API testing collection
+│   └── Human Rights MIS API.postman_collection.json # API testing collection
 ```
 
----
 
 ## 5️⃣ How to Run the Project
 
@@ -115,6 +116,14 @@ pip install -r requirements.txt
 - `DELETE /cases/{case_id}` – Archive a case
 - `GET /cases/{case_id}/history` – View case status history
 - `POST /cases/{case_id}/upload` – Upload a file to a case
+
+
+### 🧾 Incident Reporting Endpoints
+- `POST /reports/` – Submit a new incident report
+- `GET /reports/` – List reports (filter by status, date, location)
+- `PATCH /reports/{report_id}` – Update report status
+- `GET /reports/analytics` – Count reports by violation type
+
 
 ### 📊 Analytics Endpoints
 - `GET /analytics/violations` – Violation summary (supports filters)
