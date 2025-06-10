@@ -74,7 +74,7 @@ The Human Rights MIS system enables NGOs and legal teams to:
 ├── routers/                   # API route definitions (FastAPI endpoints)
 ├── pages/                     # Streamlit pages (UI modules)
 ├── uploads/                   # Uploaded evidence files (should be excluded from Git)
-├── documentation/             # NEW: Folder for API documentation artifacts
+├── documentation/             # NEW: Folder for API documentation artifacts for Incident Reporting Module 
 │   ├── openapi.json           # Downloaded OpenAPI schema (snapshot of your API)
 ├── postman/
 │   └── Human Rights MIS API.postman_collection.json # API testing collection
