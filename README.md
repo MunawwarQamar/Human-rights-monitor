@@ -140,17 +140,6 @@ ReDoc: http://127.0.0.1:8000/redoc
 
 ---
 
-## 7️⃣ Screenshots / Demo
-
-> 📸 **To add:**
->
-> - 📋 Case management form
-> - 📊 Dashboard charts (pie, bar, line)
-> - 🗺️ Interactive map of cases
-> - 📎 File upload interface
-
----
-
 ## 8️⃣ Contributors
 
 | Name               | Role                                      |
