@@ -1,65 +1,92 @@
 import streamlit as st
+import requests
+import importlib
 
-st.set_page_config(page_title="Human Rights CMS", layout="wide")
+API_URL = "http://127.0.0.1:8000/api/login"
 
-# -------------------------------
-# Logo (Optional)
-# -------------------------------
-# Uncomment below if you add a logo image
-# st.image("logo.png", width=120)
+# إعداد حالة الجلسة
+if "authenticated" not in st.session_state:
+    st.session_state["authenticated"] = False
+if "role" not in st.session_state:
+    st.session_state["role"] = None
+if "username" not in st.session_state:
+    st.session_state["username"] = ""
+if "page" not in st.session_state:
+    st.session_state["page"] = None
 
-# -------------------------------
-# Title & Intro
-# -------------------------------
-st.title("🕊️ Human Rights Case Management System")
-st.markdown("""
-Welcome to the **Human Rights CMS**, a comprehensive platform developed as part of a university project.
+# تسجيل الخروج
+def logout():
+    for key in ["authenticated", "role", "username", "page"]:
+        st.session_state[key] = None
+    st.rerun()
 
-This system enables organizations and field investigators to **document**, **track**, and **analyze** reported human rights violations effectively.
-""")
+# صفحة تسجيل الدخول
+if not st.session_state["authenticated"]:
+    st.set_page_config(page_title="Login | Human Rights MIS", layout="centered")
+    st.title("🔐 Login to Human Rights MIS")
 
-# -------------------------------
-# System Purpose
-# -------------------------------
-st.markdown("### 🧭 System Purpose")
-st.write("""
-This platform supports the collection and organization of:
-- 📂 Human rights violation cases
-- 🧍 Victim and witness information
-- 📎 Evidence files (PDFs, images, videos)
-- 📄 Incident reports
-- 📊 Visual analytics for better decision-making
-""")
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+    login_button = st.button("Login")
 
-# -------------------------------
-# Team Members
-# -------------------------------
-st.markdown("### 👥 Team Members")
-st.write("""
-- 👩‍💻 **Munawwar Qamar** : Case Management, Dashboard, Upload, Frontend
-- 👩 **Aya** : Victim & Witness Modules
-- 👩 **Shahd** : Incident Reporting & Data Validation
-""")
+    if login_button:
+        response = requests.post(API_URL, json={
+            "username": username,
+            "password": password
+        })
 
-# -------------------------------
-# System Modules
-# -------------------------------
-st.markdown("### 🧩 System Modules")
-st.markdown("""
-- **📋 Case Management:** View, filter, update and archive human rights cases.
-- **📁 Evidence Upload:** Upload and attach documents (PDFs, images, videos) to specific cases.
-- **🧍 Victim & Witness:** Manage victim and witness profiles and testimonies.
-- **📝 Incident Reporting:** Submit new cases and gather contextual details.
-- **📊 Dashboard:** Visualize statistics and trends using interactive graphs.
-""")
+        if response.status_code == 200:
+            data = response.json()
+            st.session_state["authenticated"] = True
+            st.session_state["username"] = data["username"]
+            st.session_state["role"] = data["role"]
+            st.success("Login successful! 🎉")
+            st.rerun()
+        else:
+            st.error("Invalid credentials. Please try again.")
 
-# -------------------------------
-# Navigation Instructions
-# -------------------------------
-st.markdown("### 🔗 How to Navigate")
-st.write("""
-Use the menu on the **left sidebar** to switch between system modules.
-Each module is designed to be standalone and easy to use.
-""")
+# ✅ بعد تسجيل الدخول
+else:
+    st.set_page_config(page_title="Human Rights MIS", layout="wide")
+    st.sidebar.title(f"Welcome {st.session_state['username']}")
+    st.sidebar.caption(f"Role: {st.session_state['role']}")
+    st.sidebar.button("Logout", on_click=logout)
 
-st.success("🎯 You can now begin exploring the system from the sidebar.")
+    role = st.session_state["role"]
+
+    if role == "admin":
+        pages = {
+            "Manage Cases": "1_Manage_Cases.py",
+            "Case Details": "2_Case_Details.py",
+            "Create Case": "3_Create_Case.py",
+            "Edit Case": "4_Edit_Case.py",
+            "Update Status": "5_Update_Status.py",
+            "Upload Evidence": "6_Upload_Evidence.py",
+            "Archive Case": "7_Archive_Case.py",
+            "Victim Details": "8_Victim_Details.py",
+            "Report Incident": "9_Report_Incident.py",
+            "Witness Records": "10_Witness_Records.py",
+            "Dashboard": "11_Dashboard.py"
+        }
+    elif role == "manager":
+        pages = {
+            "Manage Cases": "1_Manage_Cases.py",
+            "Case Details": "2_Case_Details.py",
+            "Create Case": "3_Create_Case.py",
+            "Edit Case": "4_Edit_Case.py",
+            "Update Status": "5_Update_Status.py",
+            "Upload Evidence": "6_Upload_Evidence.py",
+            "Dashboard": "11_Dashboard.py"
+        }
+    elif role == "reporter":
+        pages = {
+            "Report Incident": "9_Report_Incident.py"
+        }
+    else:
+        pages = {}
+
+    selected_page = st.sidebar.selectbox("📂 Navigate", list(pages.keys()))
+    if selected_page:
+        module_name = pages[selected_page].replace(".py", "")
+        module = importlib.import_module(f"frontend.{module_name}")
+        module.show()
