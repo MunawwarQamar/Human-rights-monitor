@@ -72,7 +72,7 @@ The Human Rights MIS system enables NGOs and legal teams to:
 ├── database/                  # MongoDB connection setup
 ├── models/                    # Pydantic models (for FastAPI and potentially shared with Streamlit)
 ├── routers/                   # API route definitions (FastAPI endpoints)
-├── pages/                     # Streamlit pages (UI modules)
+├── frontend/                     # Streamlit pages (UI modules)
 ├── uploads/                   # Uploaded evidence files (should be excluded from Git)
 ├── documentation/             # NEW: Folder for API documentation artifacts for Incident Reporting Module 
 │   ├── openapi.json          
